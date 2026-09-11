@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IndusMon · 工业数采监控</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="/static/vendor/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="logo">IM</span>
+      <div>
+        <h1>IndusMon</h1>
+        <p>工业设备数采与监控平台</p>
+      </div>
+    </div>
+    <div class="metrics" id="metrics">—</div>
+  </header>
+
+  <main class="layout">
+    <section class="panel devices">
+      <div class="panel-head">
+        <h2>设备</h2>
+        <button id="btn-spike" class="btn warn">制造尖峰</button>
+      </div>
+      <div id="device-list" class="device-list"></div>
+    </section>
+
+    <section class="panel chart-panel">
+      <div class="panel-head">
+        <h2>实时曲线</h2>
+        <div class="controls">
+          <select id="tag-select"></select>
+          <select id="range-select">
+            <option value="60000">近 1 分钟</option>
+            <option value="300000" selected>近 5 分钟</option>
+            <option value="900000">近 15 分钟</option>
+            <option value="3600000">近 1 小时</option>
+          </select>
+          <button id="btn-refresh" class="btn">刷新历史</button>
+        </div>
+      </div>
+      <canvas id="chart" height="140"></canvas>
+    </section>
+
+    <section class="panel alerts">
+      <div class="panel-head">
+        <h2>告警</h2>
+        <span id="alert-count" class="badge">0</span>
+      </div>
+      <div id="alert-list" class="alert-list"></div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

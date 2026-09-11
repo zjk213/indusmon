@@ -1,0 +1,141 @@
+:root {
+  --bg: #0f1419;
+  --panel: #171d24;
+  --panel2: #1c2430;
+  --ink: #e6edf3;
+  --muted: #8b9bab;
+  --line: #2a3544;
+  --accent: #2dd4bf;
+  --warn: #fbbf24;
+  --danger: #f87171;
+  --ok: #34d399;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #121820, #0f1419);
+}
+.brand { display: flex; gap: 12px; align-items: center; }
+.logo {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, #0d9488, #2dd4bf);
+  color: #042f2e; font-weight: 800;
+}
+.brand h1 { margin: 0; font-size: 18px; letter-spacing: 0.02em; }
+.brand p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+.metrics { color: var(--muted); font-size: 12px; text-align: right; line-height: 1.5; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  grid-template-rows: auto auto;
+  gap: 14px;
+  padding: 14px 20px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.devices { grid-row: 1 / span 2; }
+.panel-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.panel-head h2 { margin: 0; font-size: 14px; font-weight: 600; color: var(--accent); }
+
+.btn {
+  background: var(--panel2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.warn { border-color: #92400e; color: var(--warn); }
+
+.device-list { display: flex; flex-direction: column; gap: 10px; }
+.device-card {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+}
+.device-card h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  display: flex; justify-content: space-between;
+}
+.device-card h3 span { color: var(--muted); font-weight: 500; font-size: 11px; }
+.tag-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 4px;
+  border-top: 1px dashed #243041;
+  font-size: 12px;
+  cursor: pointer;
+}
+.tag-row:hover { background: #222b38; border-radius: 6px; }
+.tag-row .name { color: var(--muted); }
+.tag-row .val { font-variant-numeric: tabular-nums; font-weight: 600; }
+.tag-row .unit { color: var(--muted); min-width: 36px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+.dot.ok { background: var(--ok); }
+.dot.bad { background: var(--danger); }
+.dot.warn { background: var(--warn); }
+
+.controls { display: flex; gap: 8px; align-items: center; }
+select {
+  background: var(--panel2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.alert-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow: auto; }
+.alert-item {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #2a1d1d;
+  border: 1px solid #7f1d1d;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+.alert-item.cleared { background: #1a2420; border-color: #14532d; }
+.alert-item.acked { background: #1c2430; border-color: var(--line); }
+.alert-item .lv { font-weight: 700; }
+.alert-item .lv.hihi, .alert-item .lv.hi { color: var(--danger); }
+.alert-item .lv.lo { color: var(--warn); }
+.badge {
+  background: #7f1d1d; color: #fecaca;
+  border-radius: 999px; padding: 2px 8px; font-size: 11px;
+}
+.empty { color: var(--muted); font-size: 12px; padding: 8px; }
+
+@media (max-width: 960px) {
+  .layout { grid-template-columns: 1fr; }
+  .devices { grid-row: auto; }
+}
