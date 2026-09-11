@@ -6,7 +6,7 @@
 ## 特性
 
 - 内置 **Modbus TCP 模拟从站**（锅炉 + 产线两台虚拟设备），无需真实 PLC
-- 异步风格 **周期采集引擎**（按设备独立 interval，通信失败计数）
+- 多线程 **周期采集引擎**（按设备独立 interval，通信失败计数，SQLite WAL）
 - **阈值告警**（hi / hihi / lo，2% 回差去抖，hihi 优先，可 ACK）
 - REST API + **SSE** 实时推送 + 历史曲线降采样查询
 - 深色工业风 Web 看板（设备卡片 / 曲线 / 告警面板 / 一键尖峰演示）
@@ -49,6 +49,12 @@ python -m indusmon
 
 - 看板：<http://127.0.0.1:8080/>
 - OpenAPI：<http://127.0.0.1:8080/docs>
+
+### 截图
+
+![IndusMon 看板](docs/assets/dashboard.png)
+
+> 占位：启动后对 `http://127.0.0.1:8080/` 截图保存为 `docs/assets/dashboard.png`。
 
 ### 演示告警
 

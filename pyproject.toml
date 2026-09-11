@@ -32,7 +32,7 @@ indusmon = "indusmon.__main__:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-indusmon = ["web/static/*"]
+indusmon = ["web/static/*", "web/static/vendor/*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

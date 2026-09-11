@@ -28,11 +28,6 @@ def decode_registers(regs: list[int], data_type: str, scale: float, offset: floa
     return raw * scale + offset
 
 
-def encode_scaled_int(value: float) -> int:
-    """Simulator stores analog values as int(round(raw*100))."""
-    return int(round(value * 100))
-
-
 @dataclass
 class CollectorStats:
     poll_rounds: int = 0
@@ -141,8 +136,7 @@ class Collector:
     def _write_points(self, points: list[tuple]) -> None:
         if not points:
             return
-        cur = self.conn.cursor()
-        cur.executemany(
+        self.conn.executemany(
             "INSERT INTO readings(ts, device_id, tag, value, quality) VALUES (?,?,?,?,?)",
             [(p[0], p[1], p[2], p[3], p[4]) for p in points],
         )

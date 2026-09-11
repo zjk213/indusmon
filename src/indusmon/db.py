@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
+import threading
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -67,13 +68,61 @@ CREATE TABLE IF NOT EXISTS spikes (
 """
 
 
+def _open(db_path: Path | str) -> sqlite3.Connection:
+    path = Path(db_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(str(path), check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys=ON")
+    return conn
+
+
 def connect(db_path: Path | str) -> sqlite3.Connection:
+    """Create schema and return a raw connection (prefer Database for multi-thread)."""
     path = Path(db_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(path), check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.executescript(SCHEMA)
     return conn
+
+
+class Database:
+    """Thread-local SQLite access against a shared file (WAL)."""
+
+    def __init__(self, db_path: Path | str) -> None:
+        self.path = Path(db_path)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self._local = threading.local()
+        # initialize schema once
+        conn = _open(self.path)
+        conn.executescript(SCHEMA)
+        conn.close()
+
+    def conn(self) -> sqlite3.Connection:
+        conn = getattr(self._local, "conn", None)
+        if conn is None:
+            conn = _open(self.path)
+            self._local.conn = conn
+        return conn
+
+    def execute(self, sql: str, params: Any = ()) -> sqlite3.Cursor:
+        return self.conn().execute(sql, params)
+
+    def executemany(self, sql: str, seq: Iterable[Any]) -> sqlite3.Cursor:
+        return self.conn().executemany(sql, seq)
+
+    def cursor(self) -> sqlite3.Cursor:
+        return self.conn().cursor()
+
+    def commit(self) -> None:
+        self.conn().commit()
+
+    def close(self) -> None:
+        conn = getattr(self._local, "conn", None)
+        if conn is not None:
+            conn.close()
+            self._local.conn = None
 
 
 def rows_to_dicts(rows: Iterable[sqlite3.Row]) -> list[dict[str, Any]]:

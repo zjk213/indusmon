@@ -60,6 +60,28 @@ def test_readings_empty_and_range(client):
     assert r.status_code == 400
 
 
+def test_unknown_device_or_tag_404(client):
+    assert client.get("/api/v1/readings", params={"device_id": "nope"}).status_code == 404
+    assert (
+        client.get("/api/v1/readings", params={"device_id": "boiler-01", "tag": "ghost"}).status_code
+        == 404
+    )
+    assert (
+        client.get(
+            "/api/v1/series",
+            params={"device_id": "nope", "tag": "steam_temp", "from": 0, "to": 1},
+        ).status_code
+        == 404
+    )
+    assert (
+        client.get(
+            "/api/v1/series",
+            params={"device_id": "boiler-01", "tag": "ghost", "from": 0, "to": 1},
+        ).status_code
+        == 404
+    )
+
+
 def test_alerts_empty_and_metrics(client):
     assert client.get("/api/v1/alerts").json() == []
     m = client.get("/api/v1/metrics").json()

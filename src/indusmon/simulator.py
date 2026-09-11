@@ -173,13 +173,29 @@ def tag_gain(unit_id: int, tag: str) -> float:
     return 100.0
 
 
+def ensure_port_free(host: str, port: int) -> None:
+    import socket
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.bind((host, port))
+    except OSError as exc:
+        raise RuntimeError(
+            f"Modbus simulator cannot bind {host}:{port} ({exc}). "
+            f"Set INDUSMON_SIM_PORT to a free port."
+        ) from exc
+    finally:
+        sock.close()
+
+
 def start_simulator(host: str = "127.0.0.1", port: int = 5020):
-    """Start Modbus TCP server in a daemon thread. Returns the thread."""
+    """Start Modbus TCP server in a daemon thread. Raises if port is busy."""
     import threading
 
     if StartTcpServer is None:
         raise RuntimeError("pymodbus is required for the simulator")
 
+    ensure_port_free(host, port)
     context = get_bank().to_datastore()
 
     def _run() -> None:

@@ -78,6 +78,10 @@ function paintLatest() {
     const row = document.querySelector(`.tag-row[data-key="${CSS.escape(key)}"]`);
     if (!row) continue;
     row.querySelector("[data-val]").textContent = fmt(p.value, 2);
+    const dot = row.querySelector("[data-dot]");
+    if (dot) {
+      dot.className = "dot " + (p.quality === 0 ? "ok" : p.quality === 1 ? "warn" : "bad");
+    }
   }
 }
 
@@ -176,7 +180,7 @@ async function refreshMetrics() {
 
 function connectSSE() {
   if (state.es) state.es.close();
-  const es = new EventStream("/api/v1/stream");
+  const es = new EventSource("/api/v1/stream");
   state.es = es;
   es.onmessage = (ev) => {
     const data = JSON.parse(ev.data);

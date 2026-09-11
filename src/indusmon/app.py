@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from .api.routes import load_devices, router
 from .collector import Collector
 from .config import settings
-from .db import connect
+from .db import Database
 
 logger = logging.getLogger(__name__)
 
@@ -74,11 +74,9 @@ def create_app(start_sim: bool = True, start_collector: bool = True) -> FastAPI:
         if start_sim:
             from .simulator import start_simulator
 
-            try:
-                start_simulator(settings.sim_host, settings.sim_port)
-                logger.info("simulator started on %s:%s", settings.sim_host, settings.sim_port)
-            except Exception as exc:  # noqa: BLE001
-                logger.error("failed to start simulator: %s", exc)
+            # port bind failure must abort startup (S2.13)
+            start_simulator(settings.sim_host, settings.sim_port)
+            logger.info("simulator started on %s:%s", settings.sim_host, settings.sim_port)
         if start_collector:
             app.state.collector.start()
             logger.info("collector started")
@@ -95,7 +93,7 @@ def create_app(start_sim: bool = True, start_collector: bool = True) -> FastAPI:
         description="工业设备数采与监控平台",
         lifespan=lifespan,
     )
-    app.state.db = connect(settings.db)
+    app.state.db = Database(settings.db)
     app.state.collector = Collector(app.state.db, lambda: load_devices(app.state.db))
     app.state.started_at = time.time()
 

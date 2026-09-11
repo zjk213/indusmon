@@ -139,6 +139,15 @@ def query_readings(
 ) -> list[ReadingPoint]:
     if from_ms is not None and to_ms is not None and from_ms > to_ms:
         raise HTTPException(400, "from > to")
+    conn = _db(request)
+    if device_id and not conn.execute(
+        "SELECT 1 FROM devices WHERE id=?", (device_id,)
+    ).fetchone():
+        raise HTTPException(404, f"device not found: {device_id}")
+    if tag and device_id and not conn.execute(
+        "SELECT 1 FROM tags WHERE device_id=? AND name=?", (device_id, tag)
+    ).fetchone():
+        raise HTTPException(404, f"tag not found: {device_id}/{tag}")
     sql = "SELECT ts, device_id, tag, value, quality FROM readings WHERE 1=1"
     args: list[Any] = []
     if device_id:
@@ -155,7 +164,7 @@ def query_readings(
         args.append(to_ms)
     sql += " ORDER BY ts DESC LIMIT ?"
     args.append(limit)
-    rows = _db(request).execute(sql, args).fetchall()
+    rows = conn.execute(sql, args).fetchall()
     return [ReadingPoint(**dict(r)) for r in reversed(rows)]
 
 
@@ -189,6 +198,13 @@ def series(
 ) -> dict[str, Any]:
     if from_ms is not None and to_ms is not None and from_ms > to_ms:
         raise HTTPException(400, "from > to")
+    conn = _db(request)
+    if not conn.execute("SELECT 1 FROM devices WHERE id=?", (device_id,)).fetchone():
+        raise HTTPException(404, f"device not found: {device_id}")
+    if not conn.execute(
+        "SELECT 1 FROM tags WHERE device_id=? AND name=?", (device_id, tag)
+    ).fetchone():
+        raise HTTPException(404, f"tag not found: {device_id}/{tag}")
     sql = "SELECT ts, value FROM readings WHERE device_id=? AND tag=?"
     args: list[Any] = [device_id, tag]
     if from_ms is not None:
@@ -198,7 +214,7 @@ def series(
         sql += " AND ts<=?"
         args.append(to_ms)
     sql += " ORDER BY ts ASC"
-    rows = _db(request).execute(sql, args).fetchall()
+    rows = conn.execute(sql, args).fetchall()
     if len(rows) > max_points:
         step = len(rows) // max_points
         rows = rows[::step]
