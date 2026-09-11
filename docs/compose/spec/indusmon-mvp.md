@@ -1,9 +1,9 @@
 ---
 feature: indusmon-mvp
-status: in-progress
+status: delivered
 updated: 2026-09-11
 branch: feature/indusmon-mvp
-commits: 7b95098..<pending>
+commits: 7b95098..6ab0a87
 ---
 
 # IndusMon — 工业设备数采与监控平台（MVP）
@@ -13,7 +13,11 @@ commits: 7b95098..<pending>
 
 ## Report
 
-（交付时填写）
+**What was built** — 单进程 Python monorepo `indusmon`：内置 Modbus TCP 模拟从站（锅炉 unit=1 / 产线 unit=2），多线程周期采集引擎写入 SQLite（WAL + 线程本地连接），阈值告警（hi/hihi/lo，2% 回差，hihi 优先，可 ACK），FastAPI REST + SSE + 深色工业风看板（Chart.js 曲线、尖峰演示）。启动：`pip install -e ".[dev]" && python -m indusmon`，看板 `http://127.0.0.1:8080/`。
+
+**Verification** — `pytest -q` → PASS（17 passed：告警回差/scale/API/404/端口占用/协议回环）；`python scripts/smoke_e2e.py` → PASS（1.5s 写入 56 点，steam_temp≈167，尖峰后 hihi active）。独立 review 修复 4 项 critical（EventSource、端口占用启动失败、未知设备 404、线程安全 DB），二次 re-review 全 PASS。
+
+**Journey log** — 1) 模拟从站 datastore 曾把 unit_id 写死为 0，读到全 0；2) rpm 用 gain=100 会超出 int16，改为 per-point `gain`；3) SQLite 列名 `limit` 为保留字，需双引号；4) pymodbus 3.7 用 `slave=` 而非 `device_id=`；5) 前端 SSE API 是 `EventSource` 不是 `EventStream`。
 
 ## [S1] Problem
 
@@ -262,8 +266,8 @@ python -m indusmon
 ### S2.14 简历/README 叙事要点
 
 - 工业标准 Modbus TCP 接入 + 内置从站模拟
-- 异步周期采集引擎与质量位
-- SQLite 时序写入与降采样查询
+- 多线程周期采集引擎与质量位
+- SQLite（WAL + 线程本地连接）时序写入与降采样查询
 - 阈值告警（回差去抖）与 SSE 实时看板
 - 单命令本地演示、pytest 覆盖核心路径
 
@@ -280,9 +284,9 @@ python -m indusmon
 
 ## Tasks
 
-- [ ] T1: 项目骨架与依赖（pyproject、包结构、config、db schema 初始化）— acceptance: `pip install -e ".[dev]"` 成功；`python -c "import indusmon"` 成功；空库可创建表 (covers: S2.2, S2.4, S2.10, S2.11)
-- [ ] T2: Modbus 模拟从站与演示设备种子 — acceptance: 客户端可读两台虚拟设备寄存器；波形随时间变化 (covers: S2.5)
-- [ ] T3: 采集引擎入库 — acceptance: 启动后 readings 表持续增长；scale/offset 正确；失败不写坏值 (covers: S2.6; depends: T1, T2)
-- [ ] T4: 告警引擎与 API — acceptance: 尖峰可产生 hi/hihi active；回差后 cleared；ack 可用 (covers: S2.7, S2.8; depends: T3)
-- [ ] T5: REST + SSE + 静态看板 — acceptance: `/` 可看设备/曲线/告警；SSE 实时刷新；历史查询可用 (covers: S2.8, S2.9; depends: T3, T4)
-- [ ] T6: 测试与 README — acceptance: `pytest` 全绿；README 含架构图、启动步骤、API 摘要、截图位 (covers: S2.12, S2.14; depends: T1–T5)
+- [x] T1: 项目骨架与依赖（pyproject、包结构、config、db schema 初始化）— acceptance: `pip install -e ".[dev]"` 成功；`python -c "import indusmon"` 成功；空库可创建表 (covers: S2.2, S2.4, S2.10, S2.11)
+- [x] T2: Modbus 模拟从站与演示设备种子 — acceptance: 客户端可读两台虚拟设备寄存器；波形随时间变化 (covers: S2.5)
+- [x] T3: 采集引擎入库 — acceptance: 启动后 readings 表持续增长；scale/offset 正确；失败不写坏值 (covers: S2.6; depends: T1, T2)
+- [x] T4: 告警引擎与 API — acceptance: 尖峰可产生 hi/hihi active；回差后 cleared；ack 可用 (covers: S2.7, S2.8; depends: T3)
+- [x] T5: REST + SSE + 静态看板 — acceptance: `/` 可看设备/曲线/告警；SSE 实时刷新；历史查询可用 (covers: S2.8, S2.9; depends: T3, T4)
+- [x] T6: 测试与 README — acceptance: `pytest` 全绿；README 含架构图、启动步骤、API 摘要、截图位 (covers: S2.12, S2.14; depends: T1–T5)
