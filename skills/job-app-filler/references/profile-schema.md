@@ -71,7 +71,14 @@ fresh_grad_policy: "2027届"     # 政策题以用户确认为准
 
 ## 校验规则
 
-- 缺 `person.name` / `id_number` / `phone` / `email` / `education.school` → 不能开始填表  
+开始填表前至少具备：
+
+- `person.name` / `id_number` / `phone` / `email`
+- `education.school` / `college` / `major` / `edu_level` / `degree` / `edu_start` / `edu_end`
+- `awards[]`（可为空列表，但键应存在；为空时提示用户是否只填个人信息）
+
+其它规则：
+
 - `awards[].level` 必须是枚举之一，便于排序  
 - `date` 能解析为年月；写不出就问用户，不要猜  
 - **示例与文档中永远不要出现真实完整身份证号**

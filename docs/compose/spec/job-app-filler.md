@@ -1,9 +1,9 @@
 ---
 feature: job-app-filler
-status: in-progress
+status: delivered
 updated: 2026-09-11
 branch: feature/job-app-filler
-commits: 66fdabf..<pending>
+commits: 66fdabf..0e00c30
 ---
 
 # job-app-filler — 网申表智能填表 Skill
@@ -12,6 +12,12 @@ commits: 66fdabf..<pending>
 > 工作区：主 checkout 分支 `feature/job-app-filler`（沿用本仓库此前 worktree 策略覆盖：会话禁止 `git worktree add`）。
 
 ## Report
+
+**What was built** — 可安装 Agent Skill `job-app-filler`：SKILL.md 规定触发词、档案校验、CDP/Playwright 打开北森类网申、分栏填写、获奖批量循环，以及验证码/签名/上传/**最终提交** 人工关口；`references/` 提供表单映射、档案 schema、安全清单；`assets/profile.example.yaml` 为脱敏模板；`locales/` 供 MiMo 插件页显示；`skills/README.md` 说明拷贝到 `~/.claude/skills/` 的安装步骤。
+
+**Verification** — `python scripts/validate_job_app_skill.py` → PASS（结构、frontmatter、locales 键、无简历真实证件号、skill 目录无 README）。独立 review：T1–T4 合格，安全门完整，无 critical；随后修正 profile 校验列表与 validator 死代码。
+
+**Journey log** — 1) 流程从用户已验证的网申任务指令抽象而来，而非臆造站点 API；2) 把「永不自动提交」写进 Important/人工关口/Out of scope 三处，防模型自作主张；3) 示例证件号必须明显假号且校验器拉黑简历真实号；4) skill 目录禁止 README，安装说明放仓库 `skills/README.md`。
 
 ## [S1] Problem
 
@@ -112,7 +118,7 @@ description: 自动填写招聘网站网申表（北森 zhiye.com 等）：读�
 
 ## Tasks
 
-- [ ] T1: 创建 `skills/job-app-filler/` 骨架与 locales — acceptance: 目录与两 json 存在且 JSON 合法 (covers: S2.1, S2.2)
-- [ ] T2: 编写 SKILL.md 主流程 — acceptance: 含触发、步骤 1–8、人工关口、引用 references 路径 (covers: S2.3, S2.4)
-- [ ] T3: 编写 references + 脱敏 profile 模板 — acceptance: 三份 reference + example yaml，无真实证件号 (covers: S2.5, S2.6)
-- [ ] T4: 仓库 skills/README.md 安装说明 + 提交 — acceptance: 安装步骤可跟做；feature 分支 commit 完成 (covers: S2.7; depends: T1–T3)
+- [x] T1: 创建 `skills/job-app-filler/` 骨架与 locales — acceptance: 目录与两 json 存在且 JSON 合法 (covers: S2.1, S2.2)
+- [x] T2: 编写 SKILL.md 主流程 — acceptance: 含触发、步骤、人工关口、引用 references 路径 (covers: S2.3, S2.4)
+- [x] T3: 编写 references + 脱敏 profile 模板 — acceptance: 三份 reference + example yaml，无真实证件号 (covers: S2.5, S2.6)
+- [x] T4: 仓库 skills/README.md 安装说明 + 提交 — acceptance: 安装步骤可跟做；feature 分支 commit 完成 (covers: S2.7; depends: T1–T3)

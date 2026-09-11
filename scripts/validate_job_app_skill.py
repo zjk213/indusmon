@@ -42,10 +42,6 @@ def main() -> int:
             for phrase in ("网申", "北森", "提交"):
                 if phrase not in desc:
                     warn(f"description missing trigger-like phrase: {phrase}")
-        for needle in ("验证码", "Never", "永不", "提交", "references/form-mapping"):
-            if needle not in text and needle != "Never":
-                # Chinese body
-                pass
         for required in ("永不", "提交", "references/form-mapping.md", "references/safety-checklist.md"):
             if required not in text:
                 err(f"SKILL.md missing required content: {required}")
