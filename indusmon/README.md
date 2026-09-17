@@ -3,8 +3,6 @@
 轻量级工业数据采集与监控（SCADA-lite）示例项目：**Modbus TCP 接入 + 周期采集 + SQLite 时序存储 + 阈值告警 + 实时看板**。  
 单进程、零 Docker、Windows/Linux 一键启动，适合自动化 / 工业物联网方向的作品集与本地演示。
 
-网申填表 Skill 是独立 GitHub 仓库：[zjk213/job-app-filler](https://github.com/zjk213/job-app-filler)（不隶属本仓库）。
-
 ## 特性
 
 - 内置 **Modbus TCP 模拟从站**（锅炉 + 产线两台虚拟设备），无需真实 PLC
