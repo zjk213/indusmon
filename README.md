@@ -1,15 +1,16 @@
-# mimo — 作品集 monorepo
+# mimo — 本地工作区（两个独立项目）
 
-| 子项目 | 说明 |
-|--------|------|
-| [`indusmon/`](indusmon/README.md) | 工业设备数采与监控平台（Modbus + FastAPI + SQLite + 看板） |
-| [`job-app-filler/`](job-app-filler/README.md) | 网申表智能填表 Agent Skill（可拷到 Claude Code / MiMo / Cursor） |
+| 目录 | GitHub | 说明 |
+|------|--------|------|
+| [`indusmon/`](indusmon/README.md) | [zjk213/indusmon](https://github.com/zjk213/indusmon) | 工业数采监控平台 |
+| [`job-app-filler/`](job-app-filler/README.md) | [zjk213/job-app-filler](https://github.com/zjk213/job-app-filler) | 网申填表 Agent Skill |
 
-两个子项目相互独立，可分别安装、运行、发布。
+本地放在一起方便管理；**GitHub 上是两个独立仓库**，互不隶属。  
+`job-app-filler/` 在父仓库中已被忽略（`.gitignore`），其自身是独立 git 仓库。
 
 ## 快速入口
 
-**IndusMon 本地演示**
+**IndusMon**
 
 ```powershell
 cd indusmon
