@@ -17,3 +17,6 @@ data/
 .idea/
 .vscode/
 .DS_Store
+
+# independent skill repo lives here as a nested git root
+job-app-filler/
